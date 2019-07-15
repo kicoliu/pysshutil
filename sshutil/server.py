@@ -51,7 +51,7 @@ def is_sock_closed(sock):
     """Check to see if the socket is ready for reading but nothing is there, IOW it's closed"""
     rds, _, _ = select.select([sock], [], [], 0)
     if rds:
-        peek = sock.recv(1, socket.MSG_PEEK | socket.MSG_DONTWAIT)
+        peek = sock.recv(1, socket.MSG_PEEK)
         return len(peek) == 0
     return False
 
@@ -465,7 +465,8 @@ class SSHServer(object):
                 if self.debug:
                     logger.debug("%s: Accepting connections", str(self))
 
-                rfds, unused, unused = select.select([proto_sock, self.close_rsocket], [], [])
+                #rfds, unused, unused = select.select([proto_sock, self.close_rsocket], [], [])
+                rfds, unused, unused = select.select([proto_sock], [], [])
                 if self.close_rsocket in rfds:
                     if self.debug:
                         logger.debug("%s: Got close notification closing down server", str(self))
